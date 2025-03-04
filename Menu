@@ -1,0 +1,62 @@
+import pygame
+import sys
+
+pygame.init()
+
+# Screen setup
+WIDTH, HEIGHT = 800, 600
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Simple Menu System")
+
+# Colors
+WHITE = (0, 0, 0)
+BLUE = (0, 0, 255)
+RED = (255, 0, 0)
+
+# Font
+font = pygame.font.Font(None, 40)
+
+# Function to create a button
+def draw_button(text, x, y, color):
+    button_rect = pygame.Rect(x, y, 200, 50)
+    pygame.draw.rect(screen, color, button_rect)
+    text_surf = font.render(text, True, WHITE)
+    text_rect = text_surf.get_rect(center=button_rect.center)
+    screen.blit(text_surf, text_rect)
+    return button_rect
+
+# Game state
+state = "main"
+
+# Game loop
+running = True
+while running:
+    screen.fill(WHITE)
+
+    if state == "main":
+        play_button = draw_button("Play", 300, 200, BLUE)
+        quit_button = draw_button("Quit", 300, 400, RED)
+    elif state == "play":
+        back_button = draw_button("Back", 300, 300, BLUE)
+    else:
+        running = False  # Exit if state is unknown
+
+    pygame.display.flip()
+
+    # Event handling
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            pos = event.pos
+            if state == "main":
+                if play_button.collidepoint(pos):
+                    state = "play"
+                elif quit_button.collidepoint(pos):
+                    running = False
+            elif state in ["play"]:
+                if back_button.collidepoint(pos):
+                    state = "main"
+
+pygame.quit()
+sys.exit()
